@@ -25,7 +25,34 @@ function buscarPorId(req, res) {
   res.status(200).json(tarefa);
 }
 
+function atualizar(req, res) {
+  const { id } = req.params;
+  const { title, completed } = req.body;
+
+  const tarefaAtualizada = taskService.atualizarTarefa(id, title, completed);
+
+  if (!tarefaAtualizada) {
+    return res.status(404).json({ mensagem: 'Tarefa não encontrada' });
+  }
+
+  res.status(200).json(tarefaAtualizada);
+}
+
+function deletar(req, res) {
+  const { id } = req.params;
+  const sucesso = taskService.deletarTarefa(id);
+
+  if (!sucesso) {
+    return res.status(404).json({ mensagem: 'Tarefa não encontrada' });
+  }
+
+  res.status(204).send();
+}
+
 module.exports = {
   criar,
   listar,
+  buscarPorId,
+  atualizar,
+  deletar,
 };
