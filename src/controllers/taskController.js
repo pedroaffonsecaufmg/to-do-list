@@ -14,6 +14,17 @@ function listar(req, res) {
   res.status(200).json(tarefas);
 }
 
+function buscarPorId(req, res) {
+  const { id } = req.params;
+  const tarefa = taskService.buscarPorId(id);
+
+  if (!tarefa) {
+    return res.status(404).json({ mensagem: 'Tarefa não encontrada' });
+  }
+
+  res.status(200).json(tarefa);
+}
+
 module.exports = {
   criar,
   listar,

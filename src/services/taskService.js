@@ -15,6 +15,11 @@ function listarTarefas() {
   return tarefas;
 }
 
+function buscarPorId(id) {
+  const tarefaEncontrada = tarefas.find((tarefa) => tarefa.id === Number(id));
+  return tarefaEncontrada;
+}
+
 module.exports = {
   criarTarefa,
   listarTarefas,
