@@ -1,58 +1,51 @@
-const taskService = require('../services/taskService');
+import { Request, Response } from 'express';
+import * as taskService from '../services/taskService';
 
-function criar(req, res) {
+export function criar(req: Request, res: Response): void {
   const { title } = req.body;
-
   const novaTarefa = taskService.criarTarefa(title);
-
   res.status(201).json(novaTarefa);
 }
 
-function listar(req, res) {
+export function listar(req: Request, res: Response): void {
   const tarefas = taskService.listarTarefas();
-
   res.status(200).json(tarefas);
 }
 
-function buscarPorId(req, res) {
+export function buscarPorId(req: Request<{ id: string }>, res: Response): void {
   const { id } = req.params;
   const tarefa = taskService.buscarPorId(id);
 
   if (!tarefa) {
-    return res.status(404).json({ mensagem: 'Tarefa não encontrada' });
+    res.status(404).json({ mensagem: 'Tarefa não encontrada' });
+    return;
   }
 
   res.status(200).json(tarefa);
 }
 
-function atualizar(req, res) {
+export function atualizar(req: Request<{ id: string }>, res: Response): void {
   const { id } = req.params;
   const { title, completed } = req.body;
 
   const tarefaAtualizada = taskService.atualizarTarefa(id, title, completed);
 
   if (!tarefaAtualizada) {
-    return res.status(404).json({ mensagem: 'Tarefa não encontrada' });
+    res.status(404).json({ mensagem: 'Tarefa não encontrada' });
+    return;
   }
 
   res.status(200).json(tarefaAtualizada);
 }
 
-function deletar(req, res) {
+export function deletar(req: Request<{ id: string }>, res: Response): void {
   const { id } = req.params;
   const sucesso = taskService.deletarTarefa(id);
 
   if (!sucesso) {
-    return res.status(404).json({ mensagem: 'Tarefa não encontrada' });
+    res.status(404).json({ mensagem: 'Tarefa não encontrada' });
+    return;
   }
 
   res.status(204).send();
 }
-
-module.exports = {
-  criar,
-  listar,
-  buscarPorId,
-  atualizar,
-  deletar,
-};

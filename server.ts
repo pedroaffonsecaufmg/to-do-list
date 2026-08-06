@@ -1,9 +1,8 @@
-const express = require('express');
-const taskRoutes = require('./src/routes/taskRoutes');
+import express from 'express';
+import taskRoutes from './src/routes/taskRoutes';
 
 const app = express();
 app.use(express.json());
-
 app.use(taskRoutes);
 
 const PORT = 3000;

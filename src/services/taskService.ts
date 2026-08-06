@@ -1,7 +1,13 @@
-const tarefas = [];
+export interface Task {
+  id: number;
+  title: string;
+  completed: boolean;
+}
 
-function criarTarefa(title) {
-  const novaTarefa = {
+const tarefas: Task[] = [];
+
+export function criarTarefa(title: string): Task {
+  const novaTarefa: Task = {
     id: Math.random(),
     title: title,
     completed: false,
@@ -11,16 +17,20 @@ function criarTarefa(title) {
   return novaTarefa;
 }
 
-function listarTarefas() {
+export function listarTarefas(): Task[] {
   return tarefas;
 }
 
-function buscarPorId(id) {
+export function buscarPorId(id: string | number): Task | undefined {
   const tarefaEncontrada = tarefas.find((tarefa) => tarefa.id === Number(id));
   return tarefaEncontrada;
 }
 
-function atualizarTarefa(id, title, completed) {
+export function atualizarTarefa(
+  id: string | number,
+  title?: string,
+  completed?: boolean
+): Task | null {
   const tarefa = buscarPorId(id);
 
   if (!tarefa) {
@@ -38,7 +48,7 @@ function atualizarTarefa(id, title, completed) {
   return tarefa;
 }
 
-function deletarTarefa(id) {
+export function deletarTarefa(id: string | number): boolean {
   const index = tarefas.findIndex((tarefa) => tarefa.id === Number(id));
 
   if (index === -1) {
@@ -48,11 +58,3 @@ function deletarTarefa(id) {
   tarefas.splice(index, 1);
   return true;
 }
-
-module.exports = {
-  criarTarefa,
-  listarTarefas,
-  buscarPorId,
-  atualizarTarefa,
-  deletarTarefa,
-};
