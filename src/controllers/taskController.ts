@@ -1,20 +1,24 @@
 import { Request, Response } from 'express';
-import * as taskService from '../services/taskService';
+import * as taskService from '../services/taskService.js';
 
-export function criar(req: Request, res: Response): void {
+export async function criar(req: Request, res: Response): Promise<void> {
+  try {
   const { title } = req.body;
-  const novaTarefa = taskService.criarTarefa(title);
+  const novaTarefa = await taskService.criarTarefa(title);
   res.status(201).json(novaTarefa);
+ } catch (error) {
+  res.status(400).json({ mensagem: 'Erro ao criar tarefa' });
+ }
 }
 
-export function listar(req: Request, res: Response): void {
-  const tarefas = taskService.listarTarefas();
+export async function listar(req: Request, res: Response): Promise<void> {
+  const tarefas = await taskService.getAll();
   res.status(200).json(tarefas);
 }
 
-export function buscarPorId(req: Request<{ id: string }>, res: Response): void {
+export async function buscarPorId(req: Request<{ id: string }>, res: Response): Promise<void> {
   const { id } = req.params;
-  const tarefa = taskService.buscarPorId(id);
+  const tarefa = await taskService.getById(id);
 
   if (!tarefa) {
     res.status(404).json({ mensagem: 'Tarefa não encontrada' });
@@ -24,11 +28,11 @@ export function buscarPorId(req: Request<{ id: string }>, res: Response): void {
   res.status(200).json(tarefa);
 }
 
-export function atualizar(req: Request<{ id: string }>, res: Response): void {
+export async function atualizar(req: Request<{ id: string }>, res: Response): Promise<void> {
   const { id } = req.params;
   const { title, completed } = req.body;
 
-  const tarefaAtualizada = taskService.atualizarTarefa(id, title, completed);
+  const tarefaAtualizada = await taskService.atualizarTarefa(id, title, completed);
 
   if (!tarefaAtualizada) {
     res.status(404).json({ mensagem: 'Tarefa não encontrada' });
@@ -38,9 +42,9 @@ export function atualizar(req: Request<{ id: string }>, res: Response): void {
   res.status(200).json(tarefaAtualizada);
 }
 
-export function deletar(req: Request<{ id: string }>, res: Response): void {
+export async function deletar(req: Request<{ id: string }>, res: Response): Promise<void> {
   const { id } = req.params;
-  const sucesso = taskService.deletarTarefa(id);
+  const sucesso = await taskService.deletarTarefa(id);
 
   if (!sucesso) {
     res.status(404).json({ mensagem: 'Tarefa não encontrada' });

@@ -1,60 +1,59 @@
+import { prisma } from '../config/prismaClient.js';
+import { Prisma } from '../../generated/prisma/client.js';
 export interface Task {
   id: number;
   title: string;
   completed: boolean;
+  createdAt: Date;
 }
 
-const tarefas: Task[] = [];
-
-export function criarTarefa(title: string): Task {
-  const novaTarefa: Task = {
-    id: Math.random(),
-    title: title,
-    completed: false,
+export function criarTarefa(title: string): Promise<Task> {
+  return prisma.task.create({
+    data: { title },
+    })
   };
 
-  tarefas.push(novaTarefa);
-  return novaTarefa;
+export async function getAll(): Promise<Task[]> {
+  return prisma.task.findMany();
 }
 
-export function listarTarefas(): Task[] {
-  return tarefas;
+export function getById(id: string | number): Promise<Task | null> {
+  return prisma.task.findUnique({
+    where: { id: Number(id)},
+  })
 }
 
-export function buscarPorId(id: string | number): Task | undefined {
-  const tarefaEncontrada = tarefas.find((tarefa) => tarefa.id === Number(id));
-  return tarefaEncontrada;
-}
-
-export function atualizarTarefa(
+export async function atualizarTarefa(
   id: string | number,
   title?: string,
   completed?: boolean
-): Task | null {
-  const tarefa = buscarPorId(id);
-
-  if (!tarefa) {
-    return null;
+): Promise<Task | null> {
+  try {
+    return await prisma.task.update({
+      where: { id: Number(id) },
+      data: {
+        ...(title !== undefined && { title }),
+        ...(completed !== undefined && { completed }),
+      },
+    });
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+      return null;
+    }
+    throw error;
   }
-
-  if (title !== undefined) {
-    tarefa.title = title;
-  }
-
-  if (completed !== undefined) {
-    tarefa.completed = completed;
-  }
-
-  return tarefa;
 }
 
-export function deletarTarefa(id: string | number): boolean {
-  const index = tarefas.findIndex((tarefa) => tarefa.id === Number(id));
-
-  if (index === -1) {
-    return false;
+export async function deletarTarefa(id: string | number): Promise<boolean> {
+  try {
+    await prisma.task.delete({
+      where: { id:Number(id)},
+    });
+    return true;
+  } catch(error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+      return false;
+    }
+    throw error;
   }
-
-  tarefas.splice(index, 1);
-  return true;
 }
