@@ -1,7 +1,7 @@
-const express = require('express');
-const taskController = require('../controllers/taskController');
+import { Router } from 'express';
+import * as taskController from '../controllers/taskController.js';
 
-const router = express.Router();
+const router = Router();
 
 router.post('/tasks', taskController.criar);
 router.get('/tasks', taskController.listar);
@@ -9,4 +9,4 @@ router.get('/tasks/:id', taskController.buscarPorId);
 router.put('/tasks/:id', taskController.atualizar);
 router.delete('/tasks/:id', taskController.deletar);
 
-module.exports = router;
+export default router;
